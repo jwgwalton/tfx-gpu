@@ -1,0 +1,19 @@
+name: Docker Image CI
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      # TODO: the tag should map to a combination of the tfx and cuda versions
+      run: docker build . -t jwgwalton/tfx-nvidia-gpu:${GITHUB_REF/refs\/tags\//}
+    - name: Log in into Docker Hub
+      run: docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Upload Docker image
+run: docker push jwgwalton/tfx-nvidia-gpu:${GITHUB_REF/refs\/tags\//}
